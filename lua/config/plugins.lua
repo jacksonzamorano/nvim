@@ -9,22 +9,6 @@ local ensure_packer = function()
 	return false
 end
 
-
-local lsp_onattach = function(bufnr)
-	local opts = { buffer = bufnr, remap = false }
-	vim.keymap.set('n', '<leader>gd', function() vim.lsp.buf.definition() end, opts)
-	vim.keymap.set('n', '<leader>gi', function() vim.lsp.buf.references() end, opts)
-	vim.keymap.set('n', '<leader>mr', function() vim.lsp.buf.rename() end, opts)
-	vim.keymap.set('n', '<leader>mh', function() vim.lsp.buf.signature_help() end, opts)
-	vim.keymap.set('n', '<leader>md', function() vim.diagnostic.open_float() end, opts)
-	vim.keymap.set('n', '<leader>]d', function() vim.diagnostic.goto_next() end, opts)
-	vim.keymap.set('n', '<leader>[d', function() vim.diagnostic.goto_prev() end, opts)
-	vim.keymap.set('n', '<leader>ma', function() vim.lsp.buf.code_action() end, opts)
-	vim.keymap.set('n', '<leader>ff', function() vim.lsp.buf.format() end, opts)
-	vim.keymap.set('v', '<leader>ff', function() vim.lsp.buf.format() end, opts)
-end
-
-
 local packer_bootstrap = ensure_packer()
 
 return require('packer').startup(function(use)
@@ -50,9 +34,8 @@ return require('packer').startup(function(use)
 		'nvim-telescope/telescope.nvim',
 		requires = { { 'nvim-lua/plenary.nvim' }, { 'BurntSushi/ripgrep' } },
 		config = function()
-			local builtin = require('telescope.builtin')
 			local actions = require('telescope.actions')
-
+			local builtin = require('telescope.builtin')
 			require('telescope').setup({
 				defaults = {
 					mappings = {
@@ -64,6 +47,9 @@ return require('packer').startup(function(use)
 					},
 					preview = {
 						treesitter = false
+					},
+					layout_configs = {
+						vertical = { width = 0.5 }
 					}
 				},
 				extensions = {
@@ -76,13 +62,10 @@ return require('packer').startup(function(use)
 				},
 			})
 			require('telescope').load_extension('fzf')
-			local ivy = require('telescope.themes').get_dropdown();
 
-			vim.keymap.set('n', '<leader>fa', function() builtin.find_files(ivy) end, {})
-			vim.keymap.set('n', '<leader>b', function() builtin.buffers(ivy) end, {})
-			vim.keymap.set('n', '<leader>r', function() builtin.lsp_document_symbols(ivy) end, {})
-			vim.keymap.set('n', '<leader>wr', function() builtin.lsp_dynamic_workspace_symbols(ivy) end, {})
-			vim.keymap.set('n', '<leader>fg', function() builtin.live_grep(ivy) end, {})
+			vim.keymap.set('n', '<leader>fa', function() builtin.find_files({layout_strategy='vertical'}) end, {})
+			vim.keymap.set('n', '<leader>b', function() builtin.buffers({layout_strategy='vertical'}) end, {})
+			vim.keymap.set('n', '<leader>fg', function() builtin.live_grep({layout_strategy='vertical'}) end, {})
 		end
 	}
 	use {
@@ -112,6 +95,23 @@ return require('packer').startup(function(use)
 			'neovim/nvim-lspconfig',
 		},
 		config = function()
+			local lsp_onattach = function(client, bufnr)
+				local builtin = require('telescope.builtin')
+				local opts = { buffer = bufnr, remap = false }
+				vim.keymap.set('n', '<leader>gd', function() vim.lsp.buf.definition() end, opts)
+				vim.keymap.set('n', '<leader>gi', function() vim.lsp.buf.references() end, opts)
+				vim.keymap.set('n', '<leader>mr', function() vim.lsp.buf.rename() end, opts)
+				vim.keymap.set('n', '<leader>mh', function() vim.lsp.buf.signature_help() end, opts)
+				vim.keymap.set('n', '<leader>md', function() vim.diagnostic.open_float() end, opts)
+				vim.keymap.set('n', '<leader>]d', function() vim.diagnostic.goto_next() end, opts)
+				vim.keymap.set('n', '<leader>[d', function() vim.diagnostic.goto_prev() end, opts)
+				vim.keymap.set('n', '<leader>ma', function() vim.lsp.buf.code_action() end, opts)
+				vim.keymap.set('n', '<leader>ff', function() vim.lsp.buf.format() end, opts)
+				vim.keymap.set('v', '<leader>ff', function() vim.lsp.buf.format() end, opts)
+				vim.keymap.set('n', '<leader>r', function() builtin.lsp_document_symbols({layout_strategy='vertical'}) end, {})
+				vim.keymap.set('n', '<leader>wr', function() builtin.lsp_dynamic_workspace_symbols({layout_strategy='vertical'}) end, {})
+			end
+
 			local lspconfig = require('lspconfig')
 			require('mason').setup()
 			require('mason-lspconfig').setup {
