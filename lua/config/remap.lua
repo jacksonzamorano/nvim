@@ -35,7 +35,7 @@ vim.keymap.set('n', '<leader>pr', function() print(vim.fn.expand("%:f")) end)
 vim.keymap.set('n', '<leader>?', function() vim.cmd('noh') end)
 
 vim.keymap.set('n', '<leader>d', 'yyP')
-vim.keymap.set('n', 'q', '<C-w>') 
+vim.keymap.set('n', 'q', '<C-w>')
 vim.keymap.set('n', 'q,', '<C-w>20<')
 vim.keymap.set('n', 'q.', '<C-w>20>')
 vim.keymap.set('n', 'qo', ':%bd|e#|bd#<Cr>')
@@ -44,6 +44,35 @@ vim.keymap.set('v', '<A-/>', '<esc>/\\%V')
 
 vim.keymap.set('n', '<leader>sv', '<cmd>source $MYVIMRC<cr>')
 
+vim.keymap.set('n', '<leader>fn', function()
+	local fname = vim.fn.expand('%:h')
+	vim.ui.input({ prompt = '[New]: '..fname..'/' }, function (filename)
+		if filename then
+			vim.cmd('e %:h/'..filename)
+		end
+	end);
+end);
+vim.keymap.set('n', '<leader>fr', function()
+	local orig_name = vim.fn.expand('%:t');
+	local fname = vim.fn.expand('%:h')
+	vim.ui.input({ prompt = '[Rename]: ('..orig_name..') '..fname..'/' }, function (filename)
+		if filename then
+			local orig = vim.api.nvim_buf_get_name(0);
+			vim.cmd('saveas %:h/'..filename);
+			vim.cmd('!rm '..orig);
+		end
+	end);
+end);
+vim.keymap.set('n', '<leader>fd', function()
+	local fname = vim.fn.expand('%');
+	vim.ui.input({ prompt = '[Delete]: '..fname..' (y/N) > '}, function (confirm)
+		if confirm == 'y' then
+			vim.cmd('call delete(expand(\'%\')) | bdelete!')
+		end
+	end);
+end);
+
 vim.wo.relativenumber = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+vim.opt.signcolumn = 'yes'

@@ -9,7 +9,8 @@ local ensure_packer = function()
 	return false
 end
 
-local lsp_onattach = function()
+
+local lsp_onattach = function(bufnr)
 	local opts = { buffer = bufnr, remap = false }
 	vim.keymap.set('n', '<leader>gd', function() vim.lsp.buf.definition() end, opts)
 	vim.keymap.set('n', '<leader>gi', function() vim.lsp.buf.references() end, opts)
@@ -29,6 +30,22 @@ local packer_bootstrap = ensure_packer()
 return require('packer').startup(function(use)
 	-- Packer can manage itself
 	use 'wbthomason/packer.nvim'
+    use {
+        'nvim-treesitter/nvim-treesitter',
+		config = function()
+			require'nvim-treesitter.configs'.setup {
+				sync_install = false,
+				auto_install = true,
+				highlight = {
+					enable = true
+				}
+			}
+		end,
+		run = function()
+			local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+			ts_update()
+		end,
+    }
 	use {
 		'nvim-telescope/telescope.nvim',
 		requires = { { 'nvim-lua/plenary.nvim' }, { 'BurntSushi/ripgrep' } },
@@ -44,6 +61,9 @@ return require('packer').startup(function(use)
 							["<c-q>"] = actions.close,
 							["<c-d>"] = actions.delete_buffer,
 						}
+					},
+					preview = {
+						treesitter = false
 					}
 				},
 				extensions = {
@@ -53,31 +73,16 @@ return require('packer').startup(function(use)
 						override_file_sorter = true,
 						case_mode = 'smart_case'
 					}
-				}
+				},
 			})
 			require('telescope').load_extension('fzf')
-			local ivy = require('telescope.themes').get_ivy();
+			local ivy = require('telescope.themes').get_dropdown();
 
 			vim.keymap.set('n', '<leader>fa', function() builtin.find_files(ivy) end, {})
-			vim.keymap.set('n', '<leader>fb', function() builtin.buffers(ivy) end, {})
-			vim.keymap.set('n', '<leader>r', builtin.lsp_document_symbols, {})
-			vim.keymap.set('n', '<leader>fr', builtin.lsp_dynamic_workspace_symbols, {})
+			vim.keymap.set('n', '<leader>b', function() builtin.buffers(ivy) end, {})
+			vim.keymap.set('n', '<leader>r', function() builtin.lsp_document_symbols(ivy) end, {})
+			vim.keymap.set('n', '<leader>wr', function() builtin.lsp_dynamic_workspace_symbols(ivy) end, {})
 			vim.keymap.set('n', '<leader>fg', function() builtin.live_grep(ivy) end, {})
-		end
-	}
-	use {
-		'nvim-treesitter/nvim-treesitter',
-		run = ":TSUpdate",
-		config = function()
-			require'nvim-treesitter.configs'.setup {
-				ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "rust", "javascript", "typescript", "json" },
-				sync_install = false,
-				auto_install = true,
-				highlight = {
-					enable = true,
-					additional_vim_regex_highlighting = false,
-				},
-			}
 		end
 	}
 	use {
@@ -116,6 +121,39 @@ return require('packer').startup(function(use)
 							on_attach = lsp_onattach
 						}
 					end,
+					['lua_ls'] = function()
+						require'lspconfig'.lua_ls.setup {
+							on_attach = lsp_onattach,
+							on_init = function(client)
+								client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+									runtime = {
+										version = 'LuaJIT'
+									},
+									workspace = {
+										checkThirdParty = false,
+										library = {
+											vim.env.VIMRUNTIME
+										}
+									}
+								})
+							end,
+							settings = {
+								Lua = {}
+							}
+						}
+					end,
+					['tsserver'] = function()
+						require'lspconfig'.tsserver.setup {
+							on_attach = lsp_onattach,
+							settings = {
+								typescript = {
+									workspaceSymbols = {
+										excludeLibrarySymbols = true
+									}
+								}
+							}
+						}
+					end
 				}
 			}
 		end
@@ -141,25 +179,46 @@ return require('packer').startup(function(use)
 				mapping = {
 					['<Tab>'] = cmp.mapping.confirm({ select = true }),
 					['<C-Space>'] = cmp.mapping.complete(),
+					['<Up>'] = cmp.mapping.select_prev_item(),
+					['<Down>'] = cmp.mapping.select_next_item(),
 				},
+				formatting = {
+					format = function(entry, vim_item)
+						local kind_icons = {
+							Text = "",
+							Method = "󰡱",
+							Function = "󰊕",
+							Constructor = "",
+							Field = "=",
+							Variable = "󰫧",
+							Class = "󰠱",
+							Interface = "",
+							Module = "",
+							Property = "󰜢",
+							Unit = "",
+							Value = "󰎠",
+							Enum = "",
+							Keyword = "󰌋",
+							Snippet = "",
+							Color = "󰏘",
+							File = "󰈙",
+							Reference = "",
+							Folder = "󰉋",
+							EnumMember = "",
+							Constant = "󰏿",
+							Struct = "",
+							Event = "",
+							Operator = "󰆕",
+							TypeParameter = "󰅲",
+						}
+						vim_item.kind = kind_icons[vim_item.kind];
+						return vim_item;
+					end
+				}
 			});
 		end
 	}
-	use {
-		'f-person/git-blame.nvim',
-		config = function()
-			require('gitsigns').setup{
-				on_attach = function(bufnr)
-					local gs = package.loaded.gitsigns
-					vim.keymap.set('n', '[c', function() gs.prev_hunk() end)
-					vim.keymap.set('n', ']c', function() gs.next_hunk() end)
-				end
-			}
-		end
-	}
-	use 'lewis6991/gitsigns.nvim'
 	use { 'nvim-telescope/telescope-fzf-native.nvim', run = "make" }
-	use 'https://tpope.io/vim/commentary.git'
 	use {
 		'romgrk/barbar.nvim',
 		config = function()
@@ -183,32 +242,6 @@ return require('packer').startup(function(use)
 			vim.g.sonokai_enable_italic = 1
 
 			vim.cmd[[colorscheme sonokai]]
-		end
-	}
-	use {
-		'nvim-tree/nvim-tree.lua',
-		config = function()
-			require('nvim-tree').setup({
-				view = {
-					width = 50,
-				},
-				on_attach = function (bufnr)
-					local api = require('nvim-tree.api')
-
-					-- Bind [ to collapse and ] to expand
-					vim.keymap.set('n', '[', api.tree.collapse_all, { noremap = true, silent = true, buffer = bufnr })
-					vim.keymap.set('n', ']', api.tree.expand_all, { noremap = true, silent = true, buffer = bufnr  })
-					vim.keymap.set('n', 'a', api.fs.create, { noremap = true, silent = true, buffer = bufnr  })
-					vim.keymap.set('n', 'd', api.fs.remove, { noremap = true, silent = true, buffer = bufnr  })
-					vim.keymap.set('n', 'r', api.fs.rename, { noremap = true, silent = true, buffer = bufnr  })
-
-					-- Open file on enter
-					vim.keymap.set('n', '<CR>', api.node.open.edit, { noremap = true, silent = true, buffer = bufnr  })
-					vim.keymap.set('n', 'op', api.node.open.horizontal, { noremap = true, silent = true, buffer = bufnr })
-					vim.keymap.set('n', 'ov', api.node.open.vertical, { noremap = true, silent = true, buffer = bufnr })
-				end
-			})
-			vim.keymap.set('n', '<leader>e', ':NvimTreeFocus<CR>');
 		end
 	}
 	use {
