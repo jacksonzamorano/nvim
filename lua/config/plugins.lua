@@ -66,6 +66,25 @@ return require('packer').startup(function(use)
 			vim.keymap.set('n', '<leader>fa', function() builtin.find_files({ layout_strategy = 'vertical' }) end, {})
 			vim.keymap.set('n', '<leader>b', function() builtin.buffers({ layout_strategy = 'vertical' }) end, {})
 			vim.keymap.set('n', '<leader>fg', function() builtin.live_grep({ layout_strategy = 'vertical' }) end, {})
+			vim.keymap.set('n', '<leader>wr',
+			function() builtin.lsp_dynamic_workspace_symbols({ layout_strategy = 'vertical' }) end, {})
+		end
+	}
+	use {
+		'nvim-tree/nvim-tree.lua',
+		config = function()
+			require("nvim-tree").setup({
+				on_attach = function(bufnr)
+					local opts = { buffer = bufnr };
+					local api = require'nvim-tree.api'
+					vim.keymap.set('n', '<CR>', api.node.open.edit, opts);
+					vim.keymap.set('n', '<leader>a', api.fs.create, opts);
+					vim.keymap.set('n', '<leader>r', api.fs.rename, opts);
+					vim.keymap.set('n', '<leader>d', api.fs.remove, opts);
+				end
+			})
+			vim.keymap.set('n', '<leader>fe', ':NvimTreeFocus<CR>');
+			vim.keymap.set('n', '<leader>fd', ':NvimTreeFindFile<CR>');
 		end
 	}
 	use {
@@ -108,8 +127,6 @@ return require('packer').startup(function(use)
 				vim.keymap.set('n', '<leader>ma', function() vim.lsp.buf.code_action() end, opts)
 				vim.keymap.set('n', '<leader>r',
 					function() builtin.lsp_document_symbols({ layout_strategy = 'vertical' }) end, {})
-				vim.keymap.set('n', '<leader>wr',
-					function() builtin.lsp_dynamic_workspace_symbols({ layout_strategy = 'vertical' }) end, {})
 			end
 
 			local lspconfig = require('lspconfig')
@@ -176,6 +193,7 @@ return require('packer').startup(function(use)
 				}
 			};
 			vim.keymap.set('n', '<leader>ff', function() require 'conform'.format() end);
+			vim.keymap.set('v', '<leader>ff', function() require 'conform'.format() end);
 		end
 	}
 	use {
@@ -268,6 +286,18 @@ return require('packer').startup(function(use)
 		'mbbill/undotree',
 		config = function()
 			vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle);
+		end
+	}
+	use {
+		'supermaven-inc/supermaven-nvim',
+		config = function()
+			require('supermaven-nvim').setup({
+				keymaps = {
+					accept_suggestion = '<S-Tab>',
+					clear_suggestion = '<C-Tab>',
+					accept_word = '<C-CR>'
+				}
+			})
 		end
 	}
 

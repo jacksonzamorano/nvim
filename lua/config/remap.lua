@@ -39,6 +39,7 @@ vim.keymap.set('n', 'q', '<C-w>')
 vim.keymap.set('n', 'q,', '<C-w>20<')
 vim.keymap.set('n', 'q.', '<C-w>20>')
 vim.keymap.set('n', 'qo', ':%bd|e#|bd#<Cr>')
+vim.keymap.set('n', '-', 'q');
 
 vim.keymap.set('v', '<A-/>', '<esc>/\\%V')
 
