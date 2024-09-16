@@ -183,8 +183,8 @@ return require("packer").startup(function(use)
 							},
 						})
 					end,
-					["tsserver"] = function()
-						lspconfig.tsserver.setup({
+					["ts_ls"] = function()
+						lspconfig.ts_ls.setup({
 							on_attach = lsp_onattach,
 							settings = {
 								typescript = {
