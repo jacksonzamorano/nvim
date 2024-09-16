@@ -13,21 +13,22 @@ vim.api.nvim_set_keymap('n', '<A-C>', '<Cmd>BufferClose!<CR>', { noremap = true,
 vim.api.nvim_set_keymap('n', '<A-p>', '<Cmd>BufferPin<CR>', { noremap = true, silent = true })
 
 -- Bind first 9 buffers
-for i = 1, 9 do
-	vim.api.nvim_set_keymap('n', '<A-' .. i .. '>', '<Cmd>BufferGoto ' .. i .. '<CR>', { noremap = true, silent = true })
-end
 vim.keymap.set('n', '<leader>w', function() vim.cmd('bd') end)
 vim.keymap.set('n', '<leader>ph', function()
-	vim.cmd('split')
+	vim.cmd('20split')
 	vim.cmd('wincmd l')
 end)
 vim.keymap.set('n', '<leader>pv', function()
-	vim.cmd('vs')
+	vim.cmd('20vs')
 	vim.cmd('wincmd l')
 end)
 vim.keymap.set('n', '<leader>pt', function ()
 	vim.cmd('terminal')
 end)
+vim.keymap.set('n', '<C-h>', '<C-w>h')
+vim.keymap.set('n', '<C-j>', '<C-w>j')
+vim.keymap.set('n', '<C-k>', '<C-w>k')
+vim.keymap.set('n', '<C-l>', '<C-w>l')
 vim.keymap.set('t', '<Esc>', '<C-\\><C-n>');
 vim.keymap.set('n', '<leader>pa', function() print(vim.fn.expand("%:p")) end)
 vim.keymap.set('n', '<leader>pr', function() print(vim.fn.expand("%:f")) end)
@@ -35,11 +36,6 @@ vim.keymap.set('n', '<leader>pr', function() print(vim.fn.expand("%:f")) end)
 vim.keymap.set('n', '<leader>?', function() vim.cmd('noh') end)
 
 vim.keymap.set('n', '<leader>d', 'yyP')
-vim.keymap.set('n', 'q', '<C-w>')
-vim.keymap.set('n', 'q,', '<C-w>20<')
-vim.keymap.set('n', 'q.', '<C-w>20>')
-vim.keymap.set('n', 'qo', ':%bd|e#|bd#<Cr>')
-vim.keymap.set('n', '-', 'q');
 
 vim.keymap.set('v', '<A-/>', '<esc>/\\%V')
 

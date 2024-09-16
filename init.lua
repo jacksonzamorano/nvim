@@ -1,3 +1,4 @@
+vim.g.vimwiki_list = {{ path = '~/Documents/Notes' }}
 vim.o.termguicolors = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
