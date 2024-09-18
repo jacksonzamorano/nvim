@@ -13,7 +13,8 @@ vim.api.nvim_set_keymap('n', '<A-C>', '<Cmd>BufferClose!<CR>', { noremap = true,
 vim.api.nvim_set_keymap('n', '<A-p>', '<Cmd>BufferPin<CR>', { noremap = true, silent = true })
 
 -- Bind first 9 buffers
-vim.keymap.set('n', '<leader>w', function() vim.cmd('bd') end)
+vim.keymap.set('n', '`', function() vim.cmd('e #') end)
+vim.keymap.set('n', '<leader>w', function() vim.cmd('bp|bd #') end)
 vim.keymap.set('n', '<leader>ph', function()
 	vim.cmd('20split')
 	vim.cmd('wincmd l')
