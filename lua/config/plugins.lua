@@ -317,13 +317,28 @@ return require("packer").startup(function(use)
 	})
 
 	use({
-		'f-person/git-blame.nvim',
+		"f-person/git-blame.nvim",
 	})
 
 	use({
 		"lewis6991/gitsigns.nvim",
 		config = function()
-			require("gitsigns").setup()
+			local gitsigns = require("gitsigns")
+			gitsigns.setup()
+			vim.keymap.set('n', '[c', gitsigns.prev_hunk)
+			vim.keymap.set('n', ']c', gitsigns.next_hunk)
+		end,
+	})
+	use({
+		"kdheepak/lazygit.nvim",
+		-- optional for floating window border decoration
+		requires = {
+			"nvim-lua/plenary.nvim",
+		},
+		config = function()
+			vim.keymap.set("n", "<leader>fg", function()
+				vim.cmd("LazyGit")
+			end)
 		end,
 	})
 
