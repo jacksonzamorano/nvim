@@ -212,6 +212,7 @@ return require("packer").startup(function(use)
 					javascriptreact = { "prettier" },
 					json = { "prettier" },
 					go = { "gofmt" },
+					svelte = { "prettier" },
 				},
 			})
 			require("conform").formatters.prettier = {
@@ -229,13 +230,13 @@ return require("packer").startup(function(use)
 	})
 	use({
 		"hrsh7th/nvim-cmp",
-		requires = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip" },
+		requires = { 'hrsh7th/cmp-vsnip', 'hrsh7th/vim-vsnip', 'hrsh7th/cmp-nvim-lsp' },
 		config = function()
 			local cmp = require("cmp")
 			cmp.setup({
 				snippet = {
 					expand = function(args)
-						require("luasnip").lsp_expand(args)
+						vim.fn["vsnip#anonymous"](args.body)
 					end,
 				},
 				sources = {
@@ -336,10 +337,18 @@ return require("packer").startup(function(use)
 			"nvim-lua/plenary.nvim",
 		},
 		config = function()
-			vim.keymap.set("n", "<leader>fg", function()
+			vim.keymap.set("n", "<leader>g", function()
 				vim.cmd("LazyGit")
 			end)
 		end,
+	})
+
+	use({
+		'romgrk/barbar.nvim',
+		requires = {
+			'nvim-lua/plenary.nvim',
+			'nvim-tree/nvim-web-devicons',
+		},
 	})
 
 	if packer_bootstrap then
