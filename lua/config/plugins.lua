@@ -51,6 +51,7 @@ return require("packer").startup(function(use)
 					layout_configs = {
 						vertical = { width = 0.5 },
 					},
+					file_ignore_patterns = { "node_modules", ".git", ".cache", ".angular", "dist" },
 				},
 				extensions = {
 					fzf = {
@@ -89,6 +90,9 @@ return require("packer").startup(function(use)
 					vim.keymap.set("n", "<leader>r", api.fs.rename, opts)
 					vim.keymap.set("n", "<leader>d", api.fs.remove, opts)
 				end,
+				view = {
+					adaptive_size = true,
+				}
 			})
 			vim.keymap.set("n", "<leader>fe", ":NvimTreeFocus<CR>")
 			vim.keymap.set("n", "<leader>fd", ":NvimTreeFindFile<CR>")
@@ -213,6 +217,8 @@ return require("packer").startup(function(use)
 					json = { "prettier" },
 					go = { "gofmt" },
 					svelte = { "prettier" },
+					astro = { "prettier" },
+					python = { "black" },
 				},
 			})
 			require("conform").formatters.prettier = {
@@ -306,15 +312,22 @@ return require("packer").startup(function(use)
 		end,
 	})
 
+	-- use({
+	-- 	"supermaven-inc/supermaven-nvim",
+	-- 	config = function()
+	-- 		require("supermaven-nvim").setup({
+	-- 			keymaps = {
+	-- 				accept_suggestion = "<S-Tab>",
+	-- 			},
+	-- 		})
+	-- 	end,
+	-- })
 	use({
-		"supermaven-inc/supermaven-nvim",
+		"github/copilot.vim",
 		config = function()
-			require("supermaven-nvim").setup({
-				keymaps = {
-					accept_suggestion = "<S-Tab>",
-				},
-			})
-		end,
+			vim.keymap.set('i', '<S-Tab>', 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
+			vim.g.copilot_no_tab_map = true
+		end
 	})
 
 	use({
