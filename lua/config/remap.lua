@@ -35,6 +35,8 @@ vim.keymap.set('t', '<C-j>', '<C-\\><C-n><C-w>j');
 vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k');
 vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l');
 vim.keymap.set('t', '<C-Esc>', '<C-\\><C-n>');
+vim.keymap.set('t', '<C-q>', '<C-\\><C-n>');
+vim.keymap.set('n', '<C-q>', '<C-w><C-q>')
 vim.keymap.set('n', '<leader>pa', function() print(vim.fn.expand("%:p")) end)
 vim.keymap.set('n', '<leader>pr', function() print(vim.fn.expand("%:f")) end)
 
