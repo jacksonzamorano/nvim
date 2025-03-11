@@ -105,7 +105,6 @@ return require("packer").startup(function(use)
 			require("lualine").setup({
 				options = {
 					icons_enabled = true,
-					theme = "sonokai",
 					sections = {
 						lualine_a = { "mode" },
 						lualine_b = { "branch" },
@@ -158,7 +157,8 @@ return require("packer").startup(function(use)
 			end
 
 			local lspconfig = require("lspconfig")
-			require("mason").setup()
+			lspconfig.sourcekit.setup { on_attach = lsp_onattach }
+			require("mason").setup {}
 			require("mason-lspconfig").setup({
 				handlers = {
 					function(server_name)
@@ -185,6 +185,30 @@ return require("packer").startup(function(use)
 							settings = {
 								Lua = {},
 							},
+						})
+					end,
+					["angularls"] = function ()
+						local cmd = {
+							'/usr/bin/ngserver',
+							'--stdio',
+							'--tsProbeLocations',
+							table.concat({
+								angularls_path,
+								vim.uv.cwd(),
+							}, ','),
+							'--ngProbeLocations',
+							table.concat({
+								angularls_path .. '/node_modules/@angular/language-server',
+								vim.uv.cwd(),
+							}, ','),
+						}
+
+						lspconfig.angularls.setup({
+							on_attach = lsp_onattach,
+							cmd = cmd,
+							on_new_config = function(new_config, _)
+								new_config.cmd = cmd
+							end,
 						})
 					end,
 					["ts_ls"] = function()
@@ -219,6 +243,8 @@ return require("packer").startup(function(use)
 					svelte = { "prettier" },
 					astro = { "prettier" },
 					python = { "black" },
+					html = { "prettier" },
+					css = { "prettier" },
 				},
 			})
 			require("conform").formatters.prettier = {
@@ -296,13 +322,9 @@ return require("packer").startup(function(use)
 	})
 	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
 	use({
-		"sainnhe/sonokai",
+		"sainnhe/gruvbox-material",
 		config = function()
-			vim.g.sonokai_style = "shusia"
-			vim.g.sonokai_better_performance = 1
-			vim.g.sonokai_enable_italic = 1
-
-			vim.cmd([[colorscheme sonokai]])
+			vim.cmd([[colorscheme gruvbox-material]])
 		end,
 	})
 	use({
@@ -312,22 +334,15 @@ return require("packer").startup(function(use)
 		end,
 	})
 
-	-- use({
-	-- 	"supermaven-inc/supermaven-nvim",
-	-- 	config = function()
-	-- 		require("supermaven-nvim").setup({
-	-- 			keymaps = {
-	-- 				accept_suggestion = "<S-Tab>",
-	-- 			},
-	-- 		})
-	-- 	end,
-	-- })
 	use({
-		"github/copilot.vim",
+		"supermaven-inc/supermaven-nvim",
 		config = function()
-			vim.keymap.set('i', '<S-Tab>', 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
-			vim.g.copilot_no_tab_map = true
-		end
+			require("supermaven-nvim").setup({
+				keymaps = {
+					accept_suggestion = "<S-Tab>",
+				},
+			})
+		end,
 	})
 
 	use({
