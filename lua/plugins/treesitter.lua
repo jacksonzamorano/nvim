@@ -6,6 +6,15 @@ return {
 			sync_install = false,
 			auto_install = false,
 			highlight = { enable = true },
+			ensure_installed = {
+				"lua",
+				"javascript",
+				"typescript",
+				"css",
+				"html",
+				"svelte",
+				"angular",
+			}
 		})
 	end,
 }

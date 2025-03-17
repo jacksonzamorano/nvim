@@ -1,5 +1,64 @@
 return {
-	{ "hrsh7th/nvim-cmp", dependencies = { "hrsh7th/cmp-vsnip", "hrsh7th/vim-vsnip", "hrsh7th/cmp-nvim-lsp" } },
+	{
+		"hrsh7th/nvim-cmp",
+		dependencies = { "hrsh7th/cmp-vsnip", "hrsh7th/vim-vsnip", "hrsh7th/cmp-nvim-lsp" },
+		config = function()
+			local cmp = require("cmp")
+			cmp.setup({
+				snippet = {
+					expand = function(args)
+						vim.fn["vsnip#anonymous"](args.body)
+					end,
+				},
+				sources = {
+					{ name = "nvim_lsp" },
+				},
+				preselect = "item",
+				completion = {
+					completeopt = "menu,menuone,noinsert",
+				},
+				mapping = {
+					["<Tab>"] = cmp.mapping.confirm({ select = true }),
+					["<C-Space>"] = cmp.mapping.complete(),
+					["<Up>"] = cmp.mapping.select_prev_item(),
+					["<Down>"] = cmp.mapping.select_next_item(),
+				},
+				formatting = {
+					format = function(entry, vim_item)
+						local kind_icons = {
+							Text = '"',
+							Method = "Me",
+							Function = "Fu",
+							Constructor = "Co",
+							Field = "f",
+							Variable = "v",
+							Class = "Cl",
+							Interface = "If",
+							Module = "Mo",
+							Property = "f",
+							Unit = "u",
+							Value = "Va",
+							Enum = "En",
+							Keyword = "Ke",
+							Snippet = "<>",
+							Color = "Co",
+							File = "Fi",
+							Reference = "ref",
+							Folder = "Di",
+							EnumMember = "m",
+							Constant = "c",
+							Struct = "St",
+							Event = "Ev",
+							Operator = "op",
+							TypeParameter = "Tp",
+						}
+						vim_item.kind = kind_icons[vim_item.kind]
+						return vim_item
+					end,
+				},
+			})
+		end,
+	},
 	{
 		"williamboman/mason.nvim",
 		dependencies = { "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig" },
@@ -39,6 +98,9 @@ return {
 			local lspconfig = require("lspconfig")
 			require("mason").setup({})
 			require("mason-lspconfig").setup({
+				ensure_installed = {
+					"vtsls"
+				},
 				handlers = {
 					function(server_name)
 						lspconfig[server_name].setup({
@@ -91,19 +153,7 @@ return {
 							end,
 						})
 					end,
-					["ts_ls"] = function()
-						lspconfig.ts_ls.setup({
-							on_attach = lsp_onattach,
-							settings = {
-								typescript = {
-									workspaceSymbols = {
-										excludeLibrarySymbols = true,
-									},
-								},
-							},
-						})
-					end,
-				}
+				},
 			})
 		end,
 	},
