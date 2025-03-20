@@ -3,6 +3,7 @@ return {
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"BurntSushi/ripgrep",
+		"nvim-telescope/telescope-ui-select.nvim",
 		{
 			"nvim-telescope/telescope-fzf-native.nvim",
 			build = "make",
@@ -31,9 +32,15 @@ return {
 					override_file_sorter = true,
 					case_mode = "smart_case",
 				},
+				["ui-select"] = {
+					require("telescope.themes").get_dropdown({
+						-- even more opts
+					}),
+				},
 			},
 		})
 		require("telescope").load_extension("fzf")
+		require("telescope").load_extension("ui-select")
 		vim.keymap.set("n", "<leader>fa", function()
 			builtin.find_files({ layout_strategy = "vertical" })
 		end, {})

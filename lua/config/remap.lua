@@ -80,3 +80,9 @@ vim.wo.relativenumber = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.signcolumn = 'yes'
+
+vim.keymap.set("n", "<leader>pw", function()
+    vim.opt.wrap = not vim.opt.wrap:get()
+    print("Wrap " .. (vim.opt.wrap:get() and "enabled" or "disabled"))
+end, { noremap = true, silent = true, desc = "Toggle line wrapping" })
+

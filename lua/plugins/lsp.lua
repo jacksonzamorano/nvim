@@ -128,31 +128,6 @@ return {
 							},
 						})
 					end,
-					["angularls"] = function()
-						local angularls_path = vim.fn.exepath("ngserver")
-						local cmd = {
-							angularls_path,
-							"--stdio",
-							"--tsProbeLocations",
-							table.concat({
-								angularls_path,
-								vim.uv.cwd(),
-							}, ","),
-							"--ngProbeLocations",
-							table.concat({
-								angularls_path .. "/node_modules/@angular/language-server",
-								vim.uv.cwd(),
-							}, ","),
-						}
-
-						lspconfig.angularls.setup({
-							on_attach = lsp_onattach,
-							cmd = cmd,
-							on_new_config = function(new_config, _)
-								new_config.cmd = cmd
-							end,
-						})
-					end,
 				},
 			})
 		end,
