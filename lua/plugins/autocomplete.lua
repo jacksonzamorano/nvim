@@ -17,11 +17,13 @@ return {
 					normal = '<Leader>r',
 					insert = '<C-r>',
 				},
+				show_diff = {
+					full_diff = true
+				}
 			},
 		},
 		keys = {
 			{ "<leader>a", "<cmd>CopilotChat<cr>", { noremap = true, silent = true } },
-			{ "<leader>ac", "<cmd>CopilotChat<cr>", { noremap = true, silent = true } },
 		},
 		setup = function()
 		end,
