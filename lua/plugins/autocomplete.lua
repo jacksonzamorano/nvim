@@ -19,8 +19,14 @@ return {
 				},
 				show_diff = {
 					full_diff = true
+				},
+				complete = {
+					insert = '<S-Tab>'
 				}
 			},
+			window = {
+				width = 80
+			}
 		},
 		keys = {
 			{ "<leader>a", "<cmd>CopilotChat<cr>", { noremap = true, silent = true } },

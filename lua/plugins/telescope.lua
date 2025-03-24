@@ -17,10 +17,11 @@ return {
 				mappings = {
 					i = {
 						["<leader>q"] = actions.close,
-						["<c-q>"] = actions.close,
 						["<c-d>"] = actions.delete_buffer,
+						["<C-c>"] = actions.close,
 					},
 				},
+				width = 0.8,
 				preview = { treesitter = false },
 				layout_configs = { vertical = { width = 0.5 } },
 				file_ignore_patterns = { "node_modules", ".git", ".cache", ".angular", "dist" },
@@ -35,6 +36,7 @@ return {
 				["ui-select"] = {
 					require("telescope.themes").get_dropdown({
 						-- even more opts
+						width = 0.8
 					}),
 				},
 			},

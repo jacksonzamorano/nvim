@@ -12,7 +12,10 @@ return {
 			end,
 			view = { adaptive_size = true },
 		})
-		vim.keymap.set("n", "<leader>fe", ":NvimTreeFocus<CR>")
-		vim.keymap.set("n", "<leader>fd", ":NvimTreeFindFile<CR>")
 	end,
+	keys = {
+		{ "<leader>ff", ":NvimTreeToggle<CR>", { noremap = true, silent = true } },
+		{ "<leader>fd", ":NvimTreeFindFile<CR>", { noremap = true, silent = true } },
+		{ "<leader>fe", ":NvimTreeFocus<CR>", { noremap = true, silent = true } },
+	},
 }

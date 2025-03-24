@@ -12,16 +12,32 @@ vim.api.nvim_set_keymap('n', '<A-c>', '<Cmd>BufferClose<CR>', { noremap = true, 
 vim.api.nvim_set_keymap('n', '<A-C>', '<Cmd>BufferClose!<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<A-p>', '<Cmd>BufferPin<CR>', { noremap = true, silent = true })
 
--- Bind first 9 buffers
+vim.keymap.set('n', 'wi', function()
+	vim.cmd('vs|wincmd l')
+	require('telescope.builtin').find_files({layout_strategy = "vertical"})
+end)
+vim.keymap.set('n', 'wo', function()
+	vim.cmd('split|wincmd j')
+	require('telescope.builtin').find_files({layout_strategy = "vertical"})
+end)
+vim.keymap.set('n', 'wr', function()
+	vim.cmd('wincmd =')
+end)
+vim.keymap.set('n', 'wl', '<C-W>L')
+vim.keymap.set('n', 'wj', '<C-W>J')
+vim.keymap.set('n', 'wk', '<C-W>K')
+vim.keymap.set('n', 'wh', '<C-W>H')
 vim.keymap.set('n', '`', function() vim.cmd('e #') end)
 vim.keymap.set('n', '<leader>q', function() vim.cmd('bp|bd #') end)
-vim.keymap.set('n', '<leader>ph', function()
-	vim.cmd('20split')
-	vim.cmd('wincmd l')
+vim.keymap.set('n', '<C-]>', '30<C-w>>')
+vim.keymap.set('n', '<C-[>', '30<C-w><')
+vim.keymap.set('n', '<C-n>', '10<C-w>+')
+vim.keymap.set('n', '<C-m>', '10<C-w>-')
+vim.keymap.set('n', '<C-z>', function() 
+	vim.cmd('tab split')
 end)
-vim.keymap.set('n', '<leader>pv', function()
-	vim.cmd('20vs')
-	vim.cmd('wincmd l')
+vim.keymap.set('n', '<C-x>', function()
+	vim.cmd('tabc')
 end)
 vim.keymap.set('n', '<leader>pt', function ()
 	vim.cmd('terminal')
@@ -34,47 +50,14 @@ vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h');
 vim.keymap.set('t', '<C-j>', '<C-\\><C-n><C-w>j');
 vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k');
 vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l');
-vim.keymap.set('t', '<C-Esc>', '<C-\\><C-n>');
 vim.keymap.set('t', '<C-q>', '<C-\\><C-n>');
 vim.keymap.set('n', '<C-q>', '<C-w><C-q>')
 vim.keymap.set('n', '<leader>pa', function() print(vim.fn.expand("%:p")) end)
 vim.keymap.set('n', '<leader>pr', function() print(vim.fn.expand("%:f")) end)
 
 vim.keymap.set('n', '<leader>?', function() vim.cmd('noh') end)
-
 vim.keymap.set('n', '<leader>d', 'yyP')
-
 vim.keymap.set('v', '<A-/>', '<esc>/\\%V')
-
-vim.keymap.set('n', '<leader>sv', '<cmd>source $MYVIMRC<cr>')
-
-vim.keymap.set('n', '<leader>fn', function()
-	local fname = vim.fn.expand('%:h')
-	vim.ui.input({ prompt = '[New]: '..fname..'/' }, function (filename)
-		if filename then
-			vim.cmd('e %:h/'..filename)
-		end
-	end);
-end);
-vim.keymap.set('n', '<leader>fr', function()
-	local orig_name = vim.fn.expand('%:t');
-	local fname = vim.fn.expand('%:h')
-	vim.ui.input({ prompt = '[Rename]: ('..orig_name..') '..fname..'/' }, function (filename)
-		if filename then
-			local orig = vim.api.nvim_buf_get_name(0);
-			vim.cmd('saveas %:h/'..filename);
-			vim.cmd('!rm '..orig);
-		end
-	end);
-end);
-vim.keymap.set('n', '<leader>fd', function()
-	local fname = vim.fn.expand('%');
-	vim.ui.input({ prompt = '[Delete]: '..fname..' (y/N) > '}, function (confirm)
-		if confirm == 'y' then
-			vim.cmd('call delete(expand(\'%\')) | bdelete!')
-		end
-	end);
-end);
 
 vim.wo.relativenumber = true
 vim.opt.tabstop = 4
@@ -85,4 +68,3 @@ vim.keymap.set("n", "<leader>pw", function()
     vim.opt.wrap = not vim.opt.wrap:get()
     print("Wrap " .. (vim.opt.wrap:get() and "enabled" or "disabled"))
 end, { noremap = true, silent = true, desc = "Toggle line wrapping" })
-
