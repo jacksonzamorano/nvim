@@ -2,6 +2,9 @@ return {
 	"nvim-tree/nvim-tree.lua",
 	config = function()
 		require("nvim-tree").setup({
+			filters = {
+				git_ignored = false,
+			},
 			on_attach = function(bufnr)
 				local opts = { buffer = bufnr }
 				local api = require("nvim-tree.api")

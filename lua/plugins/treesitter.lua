@@ -13,7 +13,7 @@ return {
 				"css",
 				"html",
 				"svelte",
-				"angular",
+				"rust"
 			}
 		})
 	end,

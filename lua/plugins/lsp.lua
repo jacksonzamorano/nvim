@@ -101,9 +101,7 @@ return {
 			local lspconfig = require("lspconfig")
 			require("mason").setup({})
 			require("mason-lspconfig").setup({
-				ensure_installed = {
-					"vtsls"
-				},
+				ensure_installed = { },
 				handlers = {
 					function(server_name)
 						lspconfig[server_name].setup({
@@ -128,6 +126,15 @@ return {
 							end,
 							settings = {
 								Lua = {},
+							},
+						})
+					end,
+					["volar"] = function()
+						lspconfig.volar.setup({
+							init_options = {
+								vue = {
+									hybridMode = false
+								}
 							},
 						})
 					end,
